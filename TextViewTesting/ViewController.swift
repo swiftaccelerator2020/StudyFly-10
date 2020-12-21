@@ -12,7 +12,6 @@ import VisionKit
 
 class ViewController: UIViewController, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, VNDocumentCameraViewControllerDelegate {
 
-    
     var wordNeedingDef: String?
     var rangeOfSelection: NSRange?
     var rangeOfWord: NSRange?
@@ -77,6 +76,8 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         DispatchQueue.main.async { [self] in
             textView.attributedText = NSAttributedString(string: recognisedPara ?? "recognisedPara is nil!")
             attributedText = NSMutableAttributedString(attributedString: textView.attributedText)
+            attributedText?.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<textView.attributedText.length))
+            textView.attributedText = attributedText
             attributedText?.enumerateAttribute(.font, in: NSRange(0..<textView.attributedText.length), using: { (value, range, stop) in
                 if let currentFont = value as? UIFont {
                     let fontSize = Float(currentFont.fontDescriptor.pointSize)
@@ -96,6 +97,26 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         }
     }
     
+    private func updateColors() {
+        if let attributedString = attributedText {
+            attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
+            textView.attributedText = attributedString
+            if let range = rangeOfWord {
+                if isDarkMode {
+                    attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                }
+            }
+            textView.attributedText = attributedText
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateColors()
+        
+    }
+    
     
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var imageView: UIImageView!
@@ -112,6 +133,8 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+
         
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         print("Plist is at \(documentPath.absoluteString)")
@@ -205,7 +228,11 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         if rangeOfSelection != nil && wordNeedingDef != nil {
             attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: textView.selectedRange)
             rangeOfWord = textView.selectedRange
+            if isDarkMode {
+                attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: textView.selectedRange)
+            }
         }
+        
         textView.attributedText = attributedString
         printFormatter = UISimpleTextPrintFormatter(attributedText: attributedString)
         note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedString.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize)
@@ -236,6 +263,9 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
                     print(range)
                     rangeOfWord = range
                     note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedText?.string ?? textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize)
+                    if isDarkMode {
+                        attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                    }
                 }
             }
         })

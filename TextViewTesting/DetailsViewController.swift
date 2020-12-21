@@ -9,6 +9,8 @@ import UIKit
 
 class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureRecognizerDelegate {
     
+    
+    var colour = UIColor.customColor
     var note: Note!
     var printFormattor: UISimpleTextPrintFormatter = UISimpleTextPrintFormatter(text: "")
     
@@ -25,9 +27,38 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
         noteTextView.addGestureRecognizer(tap)
     }
     
+    
+    private func updateColors() {
+        let attributedString = NSMutableAttributedString(attributedString: noteTextView.attributedText)
+            attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
+        
+            if let loaction = note.range?.location, let length = note.range?.length {
+                if isDarkMode {
+                attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: loaction, length: length))
+            }
+        }
+
+        noteTextView.attributedText = attributedString
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateColors()
+        
+    }
+    
     func updateNoteDisplay() {
         title = note.title
         noteTextView.attributedText = note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.range)
+        if isDarkMode {
+            let text = NSMutableAttributedString(attributedString: noteTextView.attributedText)
+            text.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<text.length))
+            if let location = note.range?.location, let length = note.range?.length {
+                text.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: location, length: length))
+            }
+            noteTextView.attributedText = text
+        }
     }
     
 

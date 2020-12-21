@@ -17,7 +17,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     var selectedWord: String?
     var titleText: String?
     var fontSize: Int = 12
-
+    
     @IBOutlet weak var editSizeSlider: UISlider!
     @IBOutlet weak var titleTextField: UITextField!
     
@@ -29,16 +29,18 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         attributedText = NSMutableAttributedString(attributedString: textView.attributedText)
         print(attributedText as Any)
         contentEdit.attributedText = attributedText
-        
-        editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
         attributedText?.enumerateAttribute(.backgroundColor, in: NSRange(location: 0, length: textView.attributedText.length), using: { (value, range, stop) in
             if let backgroundColour = value as? UIColor {
                 if backgroundColour == UIColor.yellow {
                     print(range)
                     wordSelected = range
+                    if isDarkMode {
+                        attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                    }
                 }
             }
         })
+        editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
     }
     
     func textViewDidChangeSelection(_ textView: UITextView) {
@@ -51,9 +53,32 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         UIMenuController.shared.menuItems = [addDefintion]
     }
     
+    private func updateColors() {
+        if let attributedString = attributedText {
+            attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
+            contentEdit.attributedText = attributedString
+            if let range = wordSelected {
+                if isDarkMode {
+                    attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                }
+            }
+            contentEdit.attributedText = attributedString
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateColors()
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.setupToHideKeyboardOnTapOnView()
+        let interface = overrideUserInterfaceStyle
+        if interface == .dark {
+            contentEdit.textColor = UIColor.white
+        }
         contentEdit.delegate = self
         editSizeSlider.value = Float(fontSize)
         addCustomMenu()
@@ -63,6 +88,8 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             attributedText = NSMutableAttributedString(attributedString: contentEdit.attributedText)
             editSizeSlider.value = Float(12)
             editSizeLabel.text = "12"
+            contentEdit.textColor = UIColor.customColor
+            
         } else {
             title = "Edit Note"
             titleTextField.text = note.title
@@ -72,18 +99,26 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             contentEdit.attributedText = attributedTextNote
             editSizeLabel.text = "\(note.fontSize)"
             editSizeSlider.value = Float(note.fontSize)
-            if  let location = note.range?.location, let length = note.range?.length {
+            contentEdit.textColor = UIColor.customColor
+            if isDarkMode {
+                let text = NSMutableAttributedString(attributedString: contentEdit.attributedText)
+                text.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<text.length))
+                if let location = note.range?.location, let length = note.range?.length {
+                    text.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: location, length: length))
+                }
+                contentEdit.attributedText = text
+            }
+
+            if let location = note.range?.location, let length = note.range?.length {
                 wordSelected = NSRange(location: location, length: length)
             }
-            print(contentEdit.attributedText as Any)
             
         }
-        
         editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
     }
     
-
-//MARK: - Highlight words
+    
+    //MARK: - Highlight words
     @objc func highlightSelectedWord() {
         guard let attributedString = attributedText else {return}
         print(attributedString)
@@ -96,12 +131,15 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             print("contentEdit selected Range is \(contentEdit.selectedRange)")
             attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: seletedRange ?? contentEdit.selectedRange)
             wordSelected = contentEdit.selectedRange
+            if isDarkMode {
+                attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: contentEdit.selectedRange)
+            }
         }
+        
         contentEdit.attributedText = attributedString
-//        printFormatter = UISimpleTextPrintFormatter(attributedText: attributedString)
         attributedText = attributedString
         print(note as Any)
-
+        
     }
     
     @IBAction func editSizeValue(_ sender: Any) {
@@ -117,16 +155,16 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     
     
     @IBAction func save(_ sender: Any) {
-    print("pressing saving")
+        print("pressing saving")
     }
     
     @IBAction func cancel(_ sender: Any) {
-    print("pressing cancel")
+        print("pressing cancel")
     }
     
-
-//MARK: - Changing title
-
+    
+    //MARK: - Changing title
+    
     @IBAction func gettingTitle(_ sender: Any) {
         if titleTextField.hasText != false {
             titleText = titleTextField.text
