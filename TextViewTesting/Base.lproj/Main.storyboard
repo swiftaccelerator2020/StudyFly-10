@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="luS-Po-HIh">
-    <device id="retina6_1" orientation="portrait" appearance="dark"/>
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -131,7 +131,7 @@
                                 <textInputTraits key="textInputTraits" returnKeyType="continue"/>
                                 <connections>
                                     <action selector="continueButtonPressed:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="zrU-on-wFm"/>
-                                    <action selector="gettingTitle:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="xnD-8a-5yP"/>
+                                    <action selector="textfieldChanged:" destination="BYZ-38-t0r" eventType="editingChanged" id="3bS-nR-l02"/>
                                 </connections>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YPx-d9-I2G">
@@ -405,13 +405,13 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New Notes" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="06c-yZ-oHC">
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New Notes" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="06c-yZ-oHC">
                                                     <rect key="frame" x="4" y="3" width="406" height="38"/>
                                                     <color key="tintColor" systemColor="labelColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
-                                                        <action selector="gettingTitle:" destination="LQx-bo-btZ" eventType="editingDidEnd" id="wTP-VM-VCg"/>
+                                                        <action selector="textFieldChanged:" destination="LQx-bo-btZ" eventType="editingChanged" id="v7o-eF-czn"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -434,7 +434,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="455"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wpM-Lj-T1J">
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wpM-Lj-T1J">
                                                     <rect key="frame" x="10" y="5" width="394" height="445"/>
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <attributedString key="attributedText">
@@ -533,7 +533,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="0uq-Ey-4jI"/>
-        <segue reference="bQv-Av-9CW"/>
+        <segue reference="HCu-QN-j8K"/>
         <segue reference="Fei-Pv-2SI"/>
     </inferredMetricsTieBreakers>
     <resources>

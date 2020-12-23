@@ -187,14 +187,13 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
     }
     
 //MARK: - Getting Title
-    @IBAction func gettingTitle(_ sender: Any) {        
+    @IBAction func textfieldChanged(_ sender: Any) {
         if titleTexField.hasText != false {
             note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize)
             print(note as Any)
         }
-        
-    
     }
+    
     
 //MARK: - When keyboard will be shown
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -363,30 +362,3 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
 }
 
 
-    
-
-    extension UIViewController {
-    
-    func setupToHideKeyboardOnTapOnView() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(UIViewController.dismissKeyboard))
-
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-
-        
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-}
-
-    extension NSAttributedString {
-      
-    func strippedOriginalFont() -> NSAttributedString? {
-        let mutableCopy = self.mutableCopy() as? NSMutableAttributedString
-        mutableCopy?.removeAttribute(NSAttributedString.Key(rawValue: "NSOriginalFont"), range: NSMakeRange(0, self.length))
-        return mutableCopy?.copy() as? NSAttributedString
-        }
-}

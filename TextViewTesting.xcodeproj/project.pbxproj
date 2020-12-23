@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A4241552592FCDA00419BC4 /* NSAttributedString + stripping original font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4241542592FCDA00419BC4 /* NSAttributedString + stripping original font.swift */; };
 		0A5DEE79257BF9FA00CDFAF0 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */; };
 		0A5DEE902587B97400CDFAF0 /* NoteNaviViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */; };
 		0A5FB096258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0A4241542592FCDA00419BC4 /* NSAttributedString + stripping original font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString + stripping original font.swift"; sourceTree = "<group>"; };
 		0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteNaviViewController.swift; sourceTree = "<group>"; };
 		0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColour + changing colour based on UIStyle.swift"; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */,
 				0AFF54A22574EDFF004DCFDA /* Main.storyboard */,
 				0AFF54A02574EDFF004DCFDA /* ViewController.swift */,
+				0A4241542592FCDA00419BC4 /* NSAttributedString + stripping original font.swift */,
 				0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */,
 				0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */,
 				395B445F25828A75008E7957 /* Note.swift */,
@@ -300,6 +303,7 @@
 				0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode.swift in Sources */,
 				0AFF549F2574EDFF004DCFDA /* SceneDelegate.swift in Sources */,
 				395B446F2582D427008E7957 /* NotesTableViewCell.swift in Sources */,
+				0A4241552592FCDA00419BC4 /* NSAttributedString + stripping original font.swift in Sources */,
 				0A5FB096258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

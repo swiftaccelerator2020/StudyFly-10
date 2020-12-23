@@ -11,7 +11,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     
     var note: Note!
     var newNote = false // editing
-    var seletedRange: NSRange?
+    var selectedRange: NSRange?
     var wordSelected: NSRange?
     var attributedText: NSMutableAttributedString?
     var selectedWord: String?
@@ -25,6 +25,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     @IBOutlet weak var editSizeLabel: UILabel!
     
     
+//MARK: - When user edits text
     func textViewDidChange(_ textView: UITextView) {
         attributedText = NSMutableAttributedString(attributedString: textView.attributedText)
         print(attributedText as Any)
@@ -43,16 +44,21 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
     }
     
+//MARK: - When the user select text
     func textViewDidChangeSelection(_ textView: UITextView) {
         print(textView.selectedRange)
-        seletedRange = textView.selectedRange
+        selectedRange = textView.selectedRange
     }
     
+//MARK: - Add UIMenus
     func addCustomMenu() {
         let addDefintion = UIMenuItem(title: "Add Word Defintion", action: #selector(highlightSelectedWord))
-        UIMenuController.shared.menuItems = [addDefintion]
+        let removeDefintion = UIMenuItem(title: "Remove Word Defintion", action: #selector(removeHighlightedWords))
+        UIMenuController.shared.menuItems = [addDefintion, removeDefintion]
+    
     }
     
+//MARK: - Updateing all the colours when it is Dark or not.
     private func updateColors() {
         if let attributedString = attributedText {
             attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
@@ -67,18 +73,17 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         }
     }
     
+//MARK: - When the app turns to the dark side
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateColors()
         
     }
     
+    
+//MARK: - View did load
     override func viewDidLoad() {
         super.viewDidLoad()
-        let interface = overrideUserInterfaceStyle
-        if interface == .dark {
-            contentEdit.textColor = UIColor.white
-        }
         contentEdit.delegate = self
         editSizeSlider.value = Float(fontSize)
         addCustomMenu()
@@ -86,7 +91,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             title = "Add Note"
             contentEdit.attributedText = NSAttributedString(string: "")
             attributedText = NSMutableAttributedString(attributedString: contentEdit.attributedText)
-            editSizeSlider.value = Float(12)
+            editSizeSlider.value = Float(fontSize)
             editSizeLabel.text = "12"
             contentEdit.textColor = UIColor.customColor
             
@@ -94,12 +99,14 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             title = "Edit Note"
             titleTextField.text = note.title
             titleText = note.title
+            fontSize = note.fontSize
             let attributedTextNote = note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: Note.range(location: note.range?.location, length: note.range?.length))
             attributedText = NSMutableAttributedString(attributedString: attributedTextNote)
             contentEdit.attributedText = attributedTextNote
             editSizeLabel.text = "\(note.fontSize)"
             editSizeSlider.value = Float(note.fontSize)
             contentEdit.textColor = UIColor.customColor
+            selectedWord = note.word
             if isDarkMode {
                 let text = NSMutableAttributedString(attributedString: contentEdit.attributedText)
                 text.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<text.length))
@@ -117,19 +124,38 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
     }
     
+//MARK: - Remove highlighted words
+    @objc func removeHighlightedWords() {
+        if let nsrange = selectedRange {
+            attributedText?.enumerateAttribute(.backgroundColor, in: nsrange, using: { (value, range, stop) in
+                if let colour = value as? UIColor {
+                    if colour == UIColor.yellow {
+                        attributedText?.removeAttribute(.backgroundColor, range: nsrange)
+                        if let swiftRange = Range(range, in: contentEdit.text) {
+                            if String(contentEdit.text[swiftRange]) == selectedWord{
+                                selectedWord = nil
+                                wordSelected = nil
+                            }
+                        }
+                        contentEdit.attributedText = attributedText
+                    }
+                }
+            })
+        }
+    }
     
     //MARK: - Highlight words
     @objc func highlightSelectedWord() {
         guard let attributedString = attributedText else {return}
         print(attributedString)
-        if let range = Range(seletedRange ?? NSRange(location: 0, length: 1), in: contentEdit.text) {
+        if let range = Range(selectedRange ?? NSRange(location: 0, length: 1), in: contentEdit.text) {
             selectedWord = String(contentEdit.text[range])
             print(selectedWord as Any)
         }
         // The Issue is here
-        if seletedRange != nil && selectedWord != nil {
+        if selectedRange != nil && selectedWord != nil {
             print("contentEdit selected Range is \(contentEdit.selectedRange)")
-            attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: seletedRange ?? contentEdit.selectedRange)
+            attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: selectedRange ?? contentEdit.selectedRange)
             wordSelected = contentEdit.selectedRange
             if isDarkMode {
                 attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: contentEdit.selectedRange)
@@ -142,6 +168,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         
     }
     
+//MARK: - Size slider value change
     @IBAction func editSizeValue(_ sender: Any) {
         let sizeAttributedText = attributedText ?? NSMutableAttributedString(string: "")
         let roundedValue = lrintf(Float(editSizeSlider.value))
@@ -165,12 +192,13 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     
     //MARK: - Changing title
     
-    @IBAction func gettingTitle(_ sender: Any) {
+    @IBAction func textFieldChanged(_ sender: Any) {
         if titleTextField.hasText != false {
             titleText = titleTextField.text
             print(titleText)
         }
     }
+
     
     
     
