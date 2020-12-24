@@ -9,6 +9,8 @@ import UIKit
 
 class NoteEditingTableViewController: UITableViewController, UITextViewDelegate {
     
+    let dateFormattor = DateFormatter()
+    
     var note: Note!
     var newNote = false // editing
     var selectedRange: NSRange?
@@ -84,6 +86,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
 //MARK: - View did load
     override func viewDidLoad() {
         super.viewDidLoad()
+        dateFormattor.dateFormat = "dd/MM/yyyy"
         contentEdit.delegate = self
         editSizeSlider.value = Float(fontSize)
         addCustomMenu()
@@ -207,7 +210,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         
         if segue.identifier == "unwindToMain" {
             if note == nil {
-                note = Note(noteTitle: titleText == "" ? "New Note" : titleText!, note: contentEdit.text, word: selectedWord, wordRange: Note.range(location: wordSelected?.location, length: wordSelected?.length), noteFontSize: fontSize)
+                note = Note(noteTitle: titleText == "" ? "New Note" : titleText!, note: contentEdit.text, word: selectedWord, wordRange: Note.range(location: wordSelected?.location, length: wordSelected?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: Date()))
                 newNote = true
             } else {
                 note.title = titleText == "" ? "New Note" : titleText!

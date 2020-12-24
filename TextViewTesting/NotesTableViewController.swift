@@ -7,13 +7,14 @@
 
 import UIKit
 
-class NotesTableViewController: UITableViewController {
+class NotesTableViewController: UITableViewController, UIGestureRecognizerDelegate {
 
     var notes: [Note] = []
     var addNote = false
     var sentNote: Note?
     let dateFormattor = DateFormatter()
     let calender = Calendar.current
+    var tapGesture: UITapGestureRecognizer!
     static let usernameKey = "My"
     
     override func viewDidLoad() {
@@ -24,11 +25,15 @@ class NotesTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         
+        tapGesture = UITapGestureRecognizer(target: self, action: #selector(editName(_:)))
+        tapGesture.delegate = self
+        navigationController?.navigationBar.addGestureRecognizer(tapGesture)
         self.navigationItem.leftBarButtonItem = self.editButtonItem
         
         let loadedNotes = Note.loadFromFile() ?? []
             notes = loadedNotes
             if let isNote = sentNote {
+                isNote.creationDate = dateFormattor.string(from: Date())
                 notes.append(isNote)
                 print(notes.count)
                 Note.saveToFile(notes: notes)
@@ -52,6 +57,34 @@ class NotesTableViewController: UITableViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Remove gesture recognizer from navigation bar when view is about to disappear
+        self.navigationController?.navigationBar.removeGestureRecognizer(tapGesture)
+    }
+//MARK: - Allow user to edit name
+
+    @objc func editName(_ sender: UITapGestureRecognizer) {
+        let defaults = UserDefaults.standard
+        let alert = UIAlertController(title: "Edit your name", message: nil, preferredStyle: .alert)
+    
+        let saveName = UIAlertAction(title: "Save", style: .default) { (action) in
+            if let textField = alert.textFields?.first, let name = textField.text, textField.hasText{
+                self.title = "\(name)'s StudyFly"
+                defaults.setValue(name, forKey: NotesTableViewController.usernameKey)
+            }
+            
+        }
+            
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+            alert.addTextField { (textField) in
+                textField.text = defaults.string(forKey: NotesTableViewController.usernameKey)
+        }
+        alert.addAction(saveName)
+        alert.addAction(cancel)
+        present(alert, animated: true)
+    }
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -68,13 +101,13 @@ class NotesTableViewController: UITableViewController {
 
         cell.titleLabel.text = notes[indexPath.row].title
         cell.contentLabel.text = notes[indexPath.row].content
-        cell.dateLabel.text = dateFormattor.string(from: Note.fileModificationDate(url: Note.getArchiveURL()) ?? Date())
+        cell.dateLabel.text = notes[indexPath.row].creationDate
         print(cell.dateLabel.text as Any)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return UITableView.automaticDimension;
     }
 
     /*
@@ -138,6 +171,7 @@ class NotesTableViewController: UITableViewController {
         if segue.identifier == "unwindToMain" {
             let source = segue.source as! NoteEditingTableViewController
             if source.newNote {
+                
                 notes.append(source.note)
                 Note.saveToFile(notes: notes)
                 if addNote {
@@ -153,8 +187,7 @@ class NotesTableViewController: UITableViewController {
             }
             tableView.reloadData()
         }
-    }
     
+    }
 
 }
-

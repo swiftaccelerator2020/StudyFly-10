@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureRecognizerDelegate {
+class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureRecognizerDelegate, UITextFieldDelegate {
     
     
     var colour = UIColor.customColor
@@ -15,6 +15,25 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     var printFormattor: UISimpleTextPrintFormatter = UISimpleTextPrintFormatter(text: "")
     
     @IBOutlet weak var noteTextView: UITextView!
+    
+//    override func didMove(toParent parent: UIViewController?) {
+//        super.didMove(toParent: parent)
+//        if parent != nil && self.navigationItem.titleView == nil {
+//                initNavigationItemTitleView()
+//            }
+//    }
+//
+//    private func initNavigationItemTitleView() {
+//        let titleView = UITextField()
+//        titleView.delegate = self
+//        titleView.text = note.title
+//        titleView.minimumFontSize =  CGFloat(17)
+//        titleView.font = UIFont.boldSystemFont(ofSize: 34)
+//        let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
+//        titleView.frame = CGRect(origin:CGPoint.zero, size:CGSize(width: width, height: 500))
+//        self.navigationItem.t
+//
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,51 +81,71 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     }
     
 
-    @IBAction func isPrinting(_ sender: Any) {
+    @IBAction func showActivityVC(_ sender: Any) {
+        let text = note.content
+        printFormattor = UISimpleTextPrintFormatter(attributedText: note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.range))
         
-        // Getting the Air print view controller
-        let printerController = UIPrintInteractionController.shared
         
-        //Print Infomation
-        let printInfo = UIPrintInfo(dictionary: nil)
-            printInfo.outputType = .general
-            printInfo.jobName = "Printing Note"
-            printerController.printInfo = printInfo
+        let activityViewController = UIActivityViewController(activityItems: [text, printFormattor], applicationActivities: nil)
         
-        // Page Customisation
-        let renderer = UIPrintPageRenderer()
-        renderer.addPrintFormatter(printFormattor, startingAtPageAt: 0)
-        // Customising page size
-        let pageSize = CGSize(width: 595.2, height: 841.8)
-
-        // create some sensible margins
-        let pageMargins = UIEdgeInsets(top: 72, left: 72, bottom: 72, right: 72)
-
-        // calculate the printable rect from the above two
-        let printableRect = CGRect(x: pageMargins.left, y: pageMargins.top, width: pageSize.width - pageMargins.left - pageMargins.right, height: pageSize.height - pageMargins.top - pageMargins.bottom)
-
-        // and here's the overall paper rectangle
-        let paperRect = CGRect(x: 0, y: 0, width: pageSize.width, height: pageSize.height)
-            renderer.setValue(NSValue(cgRect: paperRect), forKey: "paperRect")
-            renderer.setValue(NSValue(cgRect: printableRect), forKey: "printableRect")
-        let pdfData = NSMutableData()
-        UIGraphicsBeginPDFContextToData(pdfData, paperRect, nil)
-        renderer.prepare(forDrawingPages: NSMakeRange(0, renderer.numberOfPages))
-        let bounds = UIGraphicsGetPDFContextBounds()
-
-        for i in 0  ..< renderer.numberOfPages {
-                UIGraphicsBeginPDFPage()
-
-                renderer.drawPage(at: i, in: bounds)
-            }
-
-            UIGraphicsEndPDFContext()
-            printerController.printPageRenderer = renderer
-        
-            printerController.present(animated: true, completionHandler: nil)
+        present(activityViewController, animated: true)
     }
     
-
+//    @IBAction func isPrinting(_ sender: Any) {
+//        
+//        // Getting the Air print view controller
+//        let printerController = UIPrintInteractionController.shared
+//        
+//        //Print Infomation
+//        let printInfo = UIPrintInfo(dictionary: nil)
+//            printInfo.outputType = .general
+//            printInfo.jobName = "Printing Note"
+//            printerController.printInfo = printInfo
+//        
+//        // Page Customisation
+//        let renderer = UIPrintPageRenderer()
+//        renderer.addPrintFormatter(printFormattor, startingAtPageAt: 0)
+//        // Customising page size
+//        let pageSize = CGSize(width: 595.2, height: 841.8)
+//
+//        // create some sensible margins
+//        let pageMargins = UIEdgeInsets(top: 72, left: 72, bottom: 72, right: 72)
+//
+//        // calculate the printable rect from the above two
+//        let printableRect = CGRect(x: pageMargins.left, y: pageMargins.top, width: pageSize.width - pageMargins.left - pageMargins.right, height: pageSize.height - pageMargins.top - pageMargins.bottom)
+//
+//        // and here's the overall paper rectangle
+//        let paperRect = CGRect(x: 0, y: 0, width: pageSize.width, height: pageSize.height)
+//            renderer.setValue(NSValue(cgRect: paperRect), forKey: "paperRect")
+//            renderer.setValue(NSValue(cgRect: printableRect), forKey: "printableRect")
+//        let pdfData = NSMutableData()
+//        UIGraphicsBeginPDFContextToData(pdfData, paperRect, nil)
+//        renderer.prepare(forDrawingPages: NSMakeRange(0, renderer.numberOfPages))
+//        let bounds = UIGraphicsGetPDFContextBounds()
+//
+//        for i in 0  ..< renderer.numberOfPages {
+//                UIGraphicsBeginPDFPage()
+//
+//                renderer.drawPage(at: i, in: bounds)
+//            }
+//
+//            UIGraphicsEndPDFContext()
+//            printerController.printPageRenderer = renderer
+//        
+//            printerController.present(animated: true, completionHandler: nil)
+//    }
+    
+//    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+//        if textField.hasText, let text = textField.text {
+//            note.title = text
+//
+//        } else {
+//            note.title = "New Note"
+//            textField.text = "New Note"
+//        }
+//
+//        return true
+//    }
     
     @objc func myMethodToHandleTap(_ sender: UITapGestureRecognizer) {
 

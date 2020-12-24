@@ -12,6 +12,7 @@ import VisionKit
 
 class ViewController: UIViewController, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, VNDocumentCameraViewControllerDelegate {
 
+    let dateFormattor = DateFormatter()
     var wordNeedingDef: String?
     var rangeOfSelection: NSRange?
     var rangeOfWord: NSRange?
@@ -22,6 +23,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
     var note: Note?
     var attributedText: NSMutableAttributedString?
     var fontSize: Int = 12
+    var date: Date!
     //MARK: - Func land
     
     // For Photo Library
@@ -94,6 +96,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
             titleTexField.isHidden = false
             scanButton.isHidden = true
             saveButton.isHidden = false
+            date = Date()
         }
     }
     
@@ -133,8 +136,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-
+        dateFormattor.dateFormat = "dd/MM/yyyy"
         
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         print("Plist is at \(documentPath.absoluteString)")
@@ -189,7 +191,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
 //MARK: - Getting Title
     @IBAction func textfieldChanged(_ sender: Any) {
         if titleTexField.hasText != false {
-            note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize)
+            note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
             print(note as Any)
         }
     }
@@ -234,7 +236,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         
         textView.attributedText = attributedString
         printFormatter = UISimpleTextPrintFormatter(attributedText: attributedString)
-        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedString.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize)
+        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedString.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
         attributedText = attributedString
         print(note as Any)
 
@@ -261,7 +263,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
                 if backgroundColour == UIColor.yellow {
                     print(range)
                     rangeOfWord = range
-                    note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedText?.string ?? textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize)
+                    note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedText?.string ?? textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
                     if isDarkMode {
                         attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
                     }
@@ -295,8 +297,8 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         let stripped = sizeAttributedText.strippedOriginalFont()
         attributedText = NSMutableAttributedString(attributedString: stripped ?? sizeAttributedText)
         textView.attributedText = stripped
-        printFormatter = UISimpleTextPrintFormatter(attributedText: textView.attributedText)
-        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.location), noteFontSize: fontSize)
+        printFormatter = UISimpleTextPrintFormatter(attributedText: textView.attributedText)        
+        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.location), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
     }
     
 //MARK: - Scan button

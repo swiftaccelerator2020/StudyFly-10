@@ -350,14 +350,14 @@
                     </view>
                     <navigationItem key="navigationItem" title="Note" id="nxc-ut-Vd5">
                         <rightBarButtonItems>
+                            <barButtonItem title="Item" image="ellipsis.circle" catalog="system" id="LTx-25-V8P">
+                                <connections>
+                                    <action selector="showActivityVC:" destination="Ifo-qX-Sa2" id="dkC-ua-WKp"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem title="Edit" id="OFU-su-KoS">
                                 <connections>
                                     <segue destination="Qi6-V0-Qgw" kind="show" identifier="editNote" id="0uq-Ey-4jI"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Item" image="printer" catalog="system" id="LTx-25-V8P">
-                                <connections>
-                                    <action selector="isPrinting:" destination="Ifo-qX-Sa2" id="Si6-Hj-3lY"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
@@ -532,15 +532,16 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="l4y-65-N0f"/>
         <segue reference="0uq-Ey-4jI"/>
         <segue reference="HCu-QN-j8K"/>
-        <segue reference="Fei-Pv-2SI"/>
+        <segue reference="m3j-gz-RT8"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="butterfly" width="2048" height="2048"/>
         <image name="doc.text.viewfinder" catalog="system" width="128" height="115"/>
+        <image name="ellipsis.circle" catalog="system" width="128" height="121"/>
         <image name="plus" catalog="system" width="128" height="113"/>
-        <image name="printer" catalog="system" width="128" height="111"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

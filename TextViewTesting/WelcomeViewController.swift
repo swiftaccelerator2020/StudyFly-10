@@ -12,6 +12,7 @@ class WelcomeViewController: UIViewController {
     @IBOutlet weak var newNoteButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         scanButton.layer.cornerRadius = 25
