@@ -13,30 +13,41 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     var colour = UIColor.customColor
     var note: Note!
     var printFormattor: UISimpleTextPrintFormatter = UISimpleTextPrintFormatter(text: "")
+    var selectedWords: [String]?
+    var HighlightedRanges: [Note.range]?
     
     @IBOutlet weak var noteTextView: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         noteTextView.delegate = self
-        print(note.word)
-        printFormattor = UISimpleTextPrintFormatter(attributedText: note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.range))
+        printFormattor = UISimpleTextPrintFormatter(attributedText: Note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.selectedDict))
+        if let dic = note.selectedDict {
+            for (value,key) in dic {
+                selectedWords?.append(value)
+                HighlightedRanges?.append(key)
+        }
         updateNoteDisplay()
         let tap = UITapGestureRecognizer(target: self, action: #selector(myMethodToHandleTap(_:)))
         tap.delegate = self
         noteTextView.addGestureRecognizer(tap)
-    }
+        }
     
+    }
     private func updateColors() {
         let attributedString = NSMutableAttributedString(attributedString: noteTextView.attributedText)
             attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
             attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
         
-            if let loaction = note.range?.location, let length = note.range?.length {
-                if isDarkMode {
-                attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: loaction, length: length))
+        if let dic = note.selectedDict {
+            for (_,key) in dic {
+                if let loaction = key.location, let length = key.length {
+                    if isDarkMode {
+                    attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: loaction, length: length))
+                }
             }
         }
+    }
 
         noteTextView.attributedText = attributedString
     }
@@ -49,12 +60,16 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     
     func updateNoteDisplay() {
         title = note.title
-        noteTextView.attributedText = note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.range)
+        noteTextView.attributedText = Note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.selectedDict)
         if isDarkMode {
             let text = NSMutableAttributedString(attributedString: noteTextView.attributedText)
             text.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<text.length))
-            if let location = note.range?.location, let length = note.range?.length {
-                text.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: location, length: length))
+            if let dic = HighlightedRanges {
+                for range in dic {
+                    if let location = range.location, let length = range.length {
+                        text.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: location, length: length))
+                    }
+                }
             }
             noteTextView.attributedText = text
         }
@@ -63,69 +78,13 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
 
     @IBAction func showActivityVC(_ sender: Any) {
         let text = note.content
-        printFormattor = UISimpleTextPrintFormatter(attributedText: note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.range))
+        printFormattor = UISimpleTextPrintFormatter(attributedText: Note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.selectedDict))
         
         
         let activityViewController = UIActivityViewController(activityItems: [text, printFormattor], applicationActivities: nil)
         
         present(activityViewController, animated: true)
     }
-    
-//    @IBAction func isPrinting(_ sender: Any) {
-//        
-//        // Getting the Air print view controller
-//        let printerController = UIPrintInteractionController.shared
-//        
-//        //Print Infomation
-//        let printInfo = UIPrintInfo(dictionary: nil)
-//            printInfo.outputType = .general
-//            printInfo.jobName = "Printing Note"
-//            printerController.printInfo = printInfo
-//        
-//        // Page Customisation
-//        let renderer = UIPrintPageRenderer()
-//        renderer.addPrintFormatter(printFormattor, startingAtPageAt: 0)
-//        // Customising page size
-//        let pageSize = CGSize(width: 595.2, height: 841.8)
-//
-//        // create some sensible margins
-//        let pageMargins = UIEdgeInsets(top: 72, left: 72, bottom: 72, right: 72)
-//
-//        // calculate the printable rect from the above two
-//        let printableRect = CGRect(x: pageMargins.left, y: pageMargins.top, width: pageSize.width - pageMargins.left - pageMargins.right, height: pageSize.height - pageMargins.top - pageMargins.bottom)
-//
-//        // and here's the overall paper rectangle
-//        let paperRect = CGRect(x: 0, y: 0, width: pageSize.width, height: pageSize.height)
-//            renderer.setValue(NSValue(cgRect: paperRect), forKey: "paperRect")
-//            renderer.setValue(NSValue(cgRect: printableRect), forKey: "printableRect")
-//        let pdfData = NSMutableData()
-//        UIGraphicsBeginPDFContextToData(pdfData, paperRect, nil)
-//        renderer.prepare(forDrawingPages: NSMakeRange(0, renderer.numberOfPages))
-//        let bounds = UIGraphicsGetPDFContextBounds()
-//
-//        for i in 0  ..< renderer.numberOfPages {
-//                UIGraphicsBeginPDFPage()
-//
-//                renderer.drawPage(at: i, in: bounds)
-//            }
-//
-//            UIGraphicsEndPDFContext()
-//            printerController.printPageRenderer = renderer
-//        
-//            printerController.present(animated: true, completionHandler: nil)
-//    }
-    
-//    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-//        if textField.hasText, let text = textField.text {
-//            note.title = text
-//
-//        } else {
-//            note.title = "New Note"
-//            textField.text = "New Note"
-//        }
-//
-//        return true
-//    }
     
     @objc func myMethodToHandleTap(_ sender: UITapGestureRecognizer) {
 
@@ -151,24 +110,36 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
             let substring = (myTextView.attributedText.string as NSString).substring(with: myRange)
             print("character at index: \(substring)")
 
-            // check if the tap location has a certain attribute
-            let attributeName = NSAttributedString.Key.backgroundColor
+            // check if the tap location intersects with any of the ranges
+            if let dic = note.selectedDict {
+                for (value,key) in dic {
+                    if let location = key.location, let length = key.length {
+                        let range = NSRange(location: location, length:length)
+                        if NSIntersectionRange(myRange, range).length > 0 {
+                            present(UIReferenceLibraryViewController(term: value), animated: true, completion: nil)
+                        }
+                    }
+            
+                }
+            }
+                let attributeName = NSAttributedString.Key.backgroundColor
             let attributeValue = myTextView.attributedText?.attribute(attributeName, at: characterIndex, effectiveRange: nil)
             if let value = attributeValue {
                 print("You tapped on \(attributeName.rawValue) and the value is: \(value)")
-                present(UIReferenceLibraryViewController(term: note.word ?? ""), animated: true, completion: nil)
-            }
+//                present(UIReferenceLibraryViewController(term: note.word ?? ""), animated: true, completion: nil)
+                }
 
+            }
         }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+        override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "editNote",
             let navigationController = segue.destination as? UINavigationController,
             let dest = navigationController.viewControllers.first as? NoteEditingTableViewController {
             print("preparing segue to note editing")
             dest.note = note
             print(dest.note.content)
+            }
         }
     }
-}
+

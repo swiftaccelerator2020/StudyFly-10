@@ -14,11 +14,12 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     var note: Note!
     var newNote = false // editing
     var selectedRange: NSRange?
-    var wordSelected: NSRange?
+    var rangesSelected: [NSRange]?
     var attributedText: NSMutableAttributedString?
-    var selectedWord: String?
+    var selectedWords: [String]?
     var titleText: String?
     var fontSize: Int = 12
+    var rangesDict: [String : Note.range] = [:]
     
     @IBOutlet weak var editSizeSlider: UISlider!
     @IBOutlet weak var titleTextField: UITextField!
@@ -36,7 +37,13 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             if let backgroundColour = value as? UIColor {
                 if backgroundColour == UIColor.yellow {
                     print(range)
-                    wordSelected = range
+                    if let swiftRange = Range(range, in: contentEdit.text) {
+                        for (value,key) in rangesDict {
+                            if value == contentEdit.text[swiftRange] {
+                                rangesDict[value] = Note.range(location: range.location, length: range.length)
+                            }
+                        }
+                    }
                     if isDarkMode {
                         attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
                     }
@@ -66,9 +73,11 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
             attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
             contentEdit.attributedText = attributedString
-            if let range = wordSelected {
+            if let ranges = rangesSelected {
                 if isDarkMode {
-                    attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                    for range in ranges {
+                        attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                    }
                 }
             }
             contentEdit.attributedText = attributedString
@@ -103,44 +112,61 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             titleTextField.text = note.title
             titleText = note.title
             fontSize = note.fontSize
-            let attributedTextNote = note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: Note.range(location: note.range?.location, length: note.range?.length))
+            let attributedTextNote = Note.makeNSAttributedString(string: note.content, fontSize: note.fontSize, rangeOfWord: note.selectedDict)
             attributedText = NSMutableAttributedString(attributedString: attributedTextNote)
             contentEdit.attributedText = attributedTextNote
             editSizeLabel.text = "\(note.fontSize)"
             editSizeSlider.value = Float(note.fontSize)
             contentEdit.textColor = UIColor.customColor
+
             contentEdit.font = UIFont.systemFont(ofSize: CGFloat(fontSize))
-            selectedWord = note.word
+            if let dict = note.selectedDict {
+                rangesDict = dict
+                for (value,key) in dict {
+                    selectedWords?.append(value)
+                    if let location = key.location, let length = key.length {
+                        rangesSelected?.append(NSRange(location: location, length: length))
+                    }
+                }
+            }
+            
+
             if isDarkMode {
                 let text = NSMutableAttributedString(attributedString: contentEdit.attributedText)
                 text.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<text.length))
-                if let location = note.range?.location, let length = note.range?.length {
-                    text.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: location, length: length))
+                if let ranges = rangesSelected {
+                    for range in ranges {
+                        text.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                        
+                    }
                 }
+                
                 contentEdit.attributedText = text
             }
-
-            if let location = note.range?.location, let length = note.range?.length {
-                wordSelected = NSRange(location: location, length: length)
-            }
-            
         }
         editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
     }
     
 //MARK: - Remove highlighted words
     @objc func removeHighlightedWords() {
-        if let nsrange = selectedRange {
+        if let nsrange = selectedRange, let words = selectedWords, let ranges = rangesSelected {
             attributedText?.enumerateAttribute(.backgroundColor, in: nsrange, using: { (value, range, stop) in
                 if let colour = value as? UIColor {
                     if colour == UIColor.yellow {
                         attributedText?.removeAttribute(.backgroundColor, range: nsrange)
-                        if let swiftRange = Range(range, in: contentEdit.text) {
-                            if String(contentEdit.text[swiftRange]) == selectedWord{
-                                selectedWord = nil
-                                wordSelected = nil
+                            for (text,key) in rangesDict {
+                                if let location = key.location, let length = key.length {
+                                    let keyRange = NSRange(location: location, length: length)
+                                    if NSIntersectionRange(nsrange, keyRange).length > 0 {
+                                        attributedText?.removeAttribute(.backgroundColor, range: keyRange)
+                                        rangesDict.removeValue(forKey: text)
+                                        selectedWords = words.filter({ $0 != text })
+                                        rangesSelected = ranges.filter({ $0 != keyRange })
+                                    
+                                    }
+                                }
                             }
-                        }
+                        
                         contentEdit.attributedText = attributedText
                     }
                 }
@@ -151,16 +177,18 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     //MARK: - Highlight words
     @objc func highlightSelectedWord() {
         guard let attributedString = attributedText else {return}
+        var word: String?
         print(attributedString)
         if let range = Range(selectedRange ?? NSRange(location: 0, length: 1), in: contentEdit.text) {
-            selectedWord = String(contentEdit.text[range])
-            print(selectedWord as Any)
+            selectedWords?.append(String(contentEdit.text[range]))
+            word = String(contentEdit.text[range])
+            print(selectedWords as Any)
         }
-        // The Issue is here
-        if selectedRange != nil && selectedWord != nil {
+        if selectedRange != nil, let text = word{
             print("contentEdit selected Range is \(contentEdit.selectedRange)")
             attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: selectedRange ?? contentEdit.selectedRange)
-            wordSelected = contentEdit.selectedRange
+            rangesSelected?.append(contentEdit.selectedRange)
+            rangesDict[text] = Note.range(location: contentEdit.selectedRange.location, length: contentEdit.selectedRange.length)
             if isDarkMode {
                 attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: contentEdit.selectedRange)
             }
@@ -168,6 +196,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         
         contentEdit.attributedText = attributedString
         attributedText = attributedString
+        
         print(note as Any)
         
     }
@@ -213,13 +242,12 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         
         if segue.identifier == "unwindToMain" {
             if note == nil {
-                note = Note(noteTitle: titleText == "" ? "New Note" : titleText!, note: contentEdit.text, word: selectedWord, wordRange: Note.range(location: wordSelected?.location, length: wordSelected?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: Date()))
+                note = Note(noteTitle: titleText == "" ? "New Note" : titleText!, note: contentEdit.text, selectedDict: rangesDict,  noteFontSize: fontSize, creationDate: dateFormattor.string(from: Date()))
                 newNote = true
             } else {
                 note.title = titleText == "" ? "New Note" : titleText!
                 note.content = contentEdit.text
-                note.word = selectedWord
-                note.range = Note.range(location: wordSelected?.location, length: wordSelected?.length)
+                note.selectedDict = rangesDict
                 note.fontSize = fontSize
             }
         }

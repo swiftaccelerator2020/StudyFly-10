@@ -13,9 +13,9 @@ import VisionKit
 class ViewController: UIViewController, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, VNDocumentCameraViewControllerDelegate {
 
     let dateFormattor = DateFormatter()
-    var wordNeedingDef: String?
+    var wordsNeedingDef: [String]?
     var rangeOfSelection: NSRange?
-    var rangeOfWord: NSRange?
+    var rangeOfWords: [NSRange]?
     var printFormatter: UISimpleTextPrintFormatter = UISimpleTextPrintFormatter(text: "error")
     var imagePicked: UIImage?
     var processed: CGImage?
@@ -23,6 +23,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
     var note: Note?
     var attributedText: NSMutableAttributedString?
     var fontSize: Int = 12
+    var rangesDict: [String:Note.range] = [:]
     var date: Date!
     //MARK: - Func land
     
@@ -105,9 +106,11 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
             attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
             attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
             textView.attributedText = attributedString
-            if let range = rangeOfWord {
+            if let ranges = rangeOfWords {
                 if isDarkMode {
-                    attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                    for range in ranges {
+                        attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: range)
+                    }
                 }
             }
             textView.attributedText = attributedText
@@ -191,7 +194,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
 //MARK: - Getting Title
     @IBAction func textfieldChanged(_ sender: Any) {
         if titleTexField.hasText != false {
-            note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
+            note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, selectedDict: rangesDict, noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
             print(note as Any)
         }
     }
@@ -221,14 +224,17 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
 //MARK: - Highlighting words
     @objc func highlightSelectedWord() {
         guard let attributedString = attributedText else {return}
+        var text: String?
         if let range = Range(rangeOfSelection ?? NSRange(location: 0, length: 1), in: textView.text) {
-            wordNeedingDef = String(textView.text[range])
-            print(wordNeedingDef as Any)
+            wordsNeedingDef?.append(String(textView.text[range]))
+            text = String(textView.text[range])
+            print(wordsNeedingDef as Any)
         }
         // The Issue is no longer here
-        if rangeOfSelection != nil && wordNeedingDef != nil {
-            attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: textView.selectedRange)
-            rangeOfWord = textView.selectedRange
+        if let range = rangeOfSelection, let word = text {
+            attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: range)
+            rangeOfWords?.append(range)
+            rangesDict[word] = Note.range(location: range.location, length: range.length)
             if isDarkMode {
                 attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: textView.selectedRange)
             }
@@ -236,7 +242,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         
         textView.attributedText = attributedString
         printFormatter = UISimpleTextPrintFormatter(attributedText: attributedString)
-        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedString.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
+        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedString.string, selectedDict: rangesDict,  noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
         attributedText = attributedString
         print(note as Any)
 
@@ -262,8 +268,18 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
             if let backgroundColour = value as? UIColor {
                 if backgroundColour == UIColor.yellow {
                     print(range)
-                    rangeOfWord = range
-                    note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedText?.string ?? textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.length), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
+                    if let swiftRange = Range(range, in: textView.text) {
+                        for (value,key) in rangesDict {
+                            if value == textView.text[swiftRange] {
+                                rangesDict[value] = Note.range(location: range.location, length: range.length)
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedText?.string ?? textView.attributedText.string, selectedDict: rangesDict,  noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
                     if isDarkMode {
                         attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
                     }
@@ -298,7 +314,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         attributedText = NSMutableAttributedString(attributedString: stripped ?? sizeAttributedText)
         textView.attributedText = stripped
         printFormatter = UISimpleTextPrintFormatter(attributedText: textView.attributedText)        
-        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, word: wordNeedingDef, wordRange: Note.range(location: rangeOfWord?.location, length: rangeOfWord?.location), noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
+        note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, selectedDict: rangesDict, noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
     }
     
 //MARK: - Scan button

@@ -12,8 +12,7 @@ import UIKit
 class Note: Codable {
     var title: String
     var content: String
-    var word: String?
-    var range: range?
+    var selectedDict: [String : range]?
     var fontSize: Int
     var creationDate: String
     
@@ -23,11 +22,10 @@ class Note: Codable {
     
     }
     
-    init(noteTitle: String, note: String, word: String?, wordRange: range?, noteFontSize: Int, creationDate: String) {
+    init(noteTitle: String, note: String, selectedDict: [String : range]?, noteFontSize: Int, creationDate: String) {
         self.title = noteTitle
         self.content = note
-        self.word = word
-        self.range = wordRange
+        self.selectedDict = selectedDict
         self.fontSize = noteFontSize
         self.creationDate = creationDate
     }
@@ -58,13 +56,17 @@ class Note: Codable {
         return decodedNotes
     }
         
-    func makeNSAttributedString(string: String, fontSize: Int, rangeOfWord: range?) -> NSAttributedString {
+    static func makeNSAttributedString(string: String, fontSize: Int, rangeOfWord: [String : range]?) -> NSAttributedString {
         let size = CGFloat(fontSize)
         var attributedText: NSMutableAttributedString
         attributedText = NSMutableAttributedString(string: string)
         attributedText.addAttribute(.font, value: UIFont.systemFont(ofSize: size), range: NSRange(0..<attributedText.length))
-        if let wordRange = rangeOfWord {
-            attributedText.addAttribute(.backgroundColor, value: UIColor.yellow, range: NSRange(location: wordRange.location ?? 0, length: wordRange.length ?? 0))
+        if let wordRange = rangeOfWord{
+            for (_,key) in wordRange {
+                if let location = key.location, let length = key.length {
+                    attributedText.addAttribute(.backgroundColor, value: UIColor.yellow, range: NSRange(location: location, length: length))
+                }
+            }
         }
             print(attributedText)
             return attributedText
