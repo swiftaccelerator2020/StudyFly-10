@@ -11,7 +11,8 @@
 		0A5DEE79257BF9FA00CDFAF0 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */; };
 		0A5DEE902587B97400CDFAF0 /* NoteNaviViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */; };
 		0A5FB096258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */; };
-		0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode.swift */; };
+		0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift */; };
+		0A9573B82596470400269D56 /* UIImage + roundedImage .swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9573B72596470400269D56 /* UIImage + roundedImage .swift */; };
 		0ABECCDC2589A1F300FE168F /* WelcomeNaviViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */; };
 		0AFF549D2574EDFF004DCFDA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF549C2574EDFF004DCFDA /* AppDelegate.swift */; };
 		0AFF549F2574EDFF004DCFDA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF549E2574EDFF004DCFDA /* SceneDelegate.swift */; };
@@ -50,7 +51,8 @@
 		0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteNaviViewController.swift; sourceTree = "<group>"; };
 		0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColour + changing colour based on UIStyle.swift"; sourceTree = "<group>"; };
-		0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController + finding if it is darkmode.swift"; sourceTree = "<group>"; };
+		0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController + finding if it is darkmode + allow for multiline title.swift"; sourceTree = "<group>"; };
+		0A9573B72596470400269D56 /* UIImage + roundedImage .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + roundedImage .swift"; sourceTree = "<group>"; };
 		0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeNaviViewController.swift; sourceTree = "<group>"; };
 		0AFF54992574EDFF004DCFDA /* TextViewTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TextViewTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AFF549C2574EDFF004DCFDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -130,12 +132,13 @@
 				0A4241542592FCDA00419BC4 /* NSAttributedString + stripping original font.swift */,
 				0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */,
 				0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */,
+				0A9573B72596470400269D56 /* UIImage + roundedImage .swift */,
 				395B445F25828A75008E7957 /* Note.swift */,
 				395B447E2582D5D2008E7957 /* NotesTableViewController.swift */,
 				395B446E2582D427008E7957 /* NotesTableViewCell.swift */,
 				395B44762582D518008E7957 /* NoteEditingTableViewController.swift */,
 				395B44862582D7B7008E7957 /* DetailsViewController.swift */,
-				0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode.swift */,
+				0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift */,
 				0AFF54A52574EE04004DCFDA /* Assets.xcassets */,
 				0AFF54A72574EE04004DCFDA /* LaunchScreen.storyboard */,
 				0AFF54AA2574EE04004DCFDA /* Info.plist */,
@@ -298,9 +301,10 @@
 				395B44872582D7B7008E7957 /* DetailsViewController.swift in Sources */,
 				395B446025828A75008E7957 /* Note.swift in Sources */,
 				0AFF54A12574EDFF004DCFDA /* ViewController.swift in Sources */,
+				0A9573B82596470400269D56 /* UIImage + roundedImage .swift in Sources */,
 				0A5DEE79257BF9FA00CDFAF0 /* WelcomeViewController.swift in Sources */,
 				0AFF549D2574EDFF004DCFDA /* AppDelegate.swift in Sources */,
-				0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode.swift in Sources */,
+				0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift in Sources */,
 				0AFF549F2574EDFF004DCFDA /* SceneDelegate.swift in Sources */,
 				395B446F2582D427008E7957 /* NotesTableViewCell.swift in Sources */,
 				0A4241552592FCDA00419BC4 /* NSAttributedString + stripping original font.swift in Sources */,

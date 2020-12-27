@@ -109,6 +109,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             editSizeLabel.text = "\(note.fontSize)"
             editSizeSlider.value = Float(note.fontSize)
             contentEdit.textColor = UIColor.customColor
+            contentEdit.font = UIFont.systemFont(ofSize: CGFloat(fontSize))
             selectedWord = note.word
             if isDarkMode {
                 let text = NSMutableAttributedString(attributedString: contentEdit.attributedText)
@@ -179,8 +180,10 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         sizeAttributedText.addAttribute(.font, value: UIFont.systemFont(ofSize: CGFloat(roundedValue)), range: NSRange(0..<sizeAttributedText.length))
         fontSize = roundedValue
         let stripped = sizeAttributedText.strippedOriginalFont()
-        attributedText = NSMutableAttributedString(attributedString: stripped ?? sizeAttributedText)
-        contentEdit.attributedText = stripped
+        if let strippedText = stripped {
+        attributedText = NSMutableAttributedString(attributedString: strippedText)
+        contentEdit.attributedText = strippedText
+        }
     }
     
     

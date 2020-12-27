@@ -16,25 +16,6 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     
     @IBOutlet weak var noteTextView: UITextView!
     
-//    override func didMove(toParent parent: UIViewController?) {
-//        super.didMove(toParent: parent)
-//        if parent != nil && self.navigationItem.titleView == nil {
-//                initNavigationItemTitleView()
-//            }
-//    }
-//
-//    private func initNavigationItemTitleView() {
-//        let titleView = UITextField()
-//        titleView.delegate = self
-//        titleView.text = note.title
-//        titleView.minimumFontSize =  CGFloat(17)
-//        titleView.font = UIFont.boldSystemFont(ofSize: 34)
-//        let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
-//        titleView.frame = CGRect(origin:CGPoint.zero, size:CGSize(width: width, height: 500))
-//        self.navigationItem.t
-//
-//    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         noteTextView.delegate = self
@@ -45,7 +26,6 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
         tap.delegate = self
         noteTextView.addGestureRecognizer(tap)
     }
-    
     
     private func updateColors() {
         let attributedString = NSMutableAttributedString(attributedString: noteTextView.attributedText)
