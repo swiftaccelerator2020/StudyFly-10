@@ -13,8 +13,8 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     var colour = UIColor.customColor
     var note: Note!
     var printFormattor: UISimpleTextPrintFormatter = UISimpleTextPrintFormatter(text: "")
-    var selectedWords: [String]?
-    var HighlightedRanges: [Note.range]?
+    var selectedWords: [String]? = []
+    var HighlightedRanges: [Note.range]? = []
     
     @IBOutlet weak var noteTextView: UITextView!
     
@@ -35,6 +35,7 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
     
     }
     private func updateColors() {
+
         let attributedString = NSMutableAttributedString(attributedString: noteTextView.attributedText)
             attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
             attributedString.addAttribute(.foregroundColor, value: UIColor.customColor, range: NSRange(0..<attributedString.length))
@@ -115,22 +116,17 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
                 for (value,key) in dic {
                     if let location = key.location, let length = key.length {
                         let range = NSRange(location: location, length:length)
-                        if NSIntersectionRange(myRange, range).length > 0 {
+                        let attributeName = NSAttributedString.Key.backgroundColor
+                        let attributeValue = myTextView.attributedText?.attribute(attributeName, at: characterIndex, effectiveRange: nil)
+                        if NSIntersectionRange(myRange, range).length > 0, let attrValue = attributeValue {
+                            print("You tapped on \(attributeName.rawValue) and the value is: \(attrValue)")
                             present(UIReferenceLibraryViewController(term: value), animated: true, completion: nil)
                         }
                     }
-            
                 }
-            }
-                let attributeName = NSAttributedString.Key.backgroundColor
-            let attributeValue = myTextView.attributedText?.attribute(attributeName, at: characterIndex, effectiveRange: nil)
-            if let value = attributeValue {
-                print("You tapped on \(attributeName.rawValue) and the value is: \(value)")
-//                present(UIReferenceLibraryViewController(term: note.word ?? ""), animated: true, completion: nil)
-                }
-
             }
         }
+    }
 
         override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "editNote",

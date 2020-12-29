@@ -225,10 +225,20 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
     @objc func highlightSelectedWord() {
         guard let attributedString = attributedText else {return}
         var text: String?
-        if let range = Range(rangeOfSelection ?? NSRange(location: 0, length: 1), in: textView.text) {
-            wordsNeedingDef?.append(String(textView.text[range]))
-            text = String(textView.text[range])
-            print(wordsNeedingDef as Any)
+        if let selectedRange = rangeOfSelection {
+            for (value,key) in rangesDict {
+                if NSIntersectionRange(Note.makeNSRange(from: key), selectedRange).length > 0{
+                    return
+                }
+            }
+            if let range = Range(selectedRange , in: textView.text) {
+                if (wordsNeedingDef?.append(String(textView.text[range]))) == nil {
+                    wordsNeedingDef = [String(textView.text[range])]
+                }
+                text = String(textView.text[range])
+                print(wordsNeedingDef as Any)
+            }
+        
         }
         // The Issue is no longer here
         if let range = rangeOfSelection, let word = text {
@@ -252,12 +262,40 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
 //MARK: - Custom UIMenuItem
     func addCustomMenu() {
         let addDefintion = UIMenuItem(title: "Add Word Defintion", action: #selector(highlightSelectedWord))
-        UIMenuController.shared.menuItems = [addDefintion]
+        let removeDefintion = UIMenuItem(title: "Remove Word Defintion", action: #selector(removeHighlightedWords))
+        UIMenuController.shared.menuItems = [addDefintion, removeDefintion]
+    
     }
     
 
     
-    
+    //MARK: - Remove highlighted words
+        @objc func removeHighlightedWords() {
+            if let nsrange = rangeOfSelection, let words = wordsNeedingDef, let ranges = rangeOfWords {
+                attributedText?.enumerateAttribute(.backgroundColor, in: nsrange, using: { (value, range, stop) in
+                    if let colour = value as? UIColor {
+                        if colour == UIColor.yellow {
+                                for (text,key) in rangesDict {
+                                    if let location = key.location, let length = key.length {
+                                        let keyRange = NSRange(location: location, length: length)
+                                        if NSIntersectionRange(nsrange, keyRange).length > 0 {
+                                            attributedText?.removeAttribute(.backgroundColor, range: keyRange)
+                                            rangesDict.removeValue(forKey: text)
+                                            wordsNeedingDef = words.filter({ $0 != text })
+                                            rangeOfWords = ranges.filter({ $0 != keyRange })
+                                            if isDarkMode {
+                                                attributedText?.addAttribute(.foregroundColor, value: UIColor.white, range: keyRange)
+                                            }
+                                        }
+                                    }
+                                }
+                            
+                            textView.attributedText = attributedText
+                        }
+                    }
+                })
+            }
+        }
     
     
     //MARK: - Text view did change
@@ -269,12 +307,11 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
                 if backgroundColour == UIColor.yellow {
                     print(range)
                     if let swiftRange = Range(range, in: textView.text) {
-                        for (value,key) in rangesDict {
-                            if value == textView.text[swiftRange] {
-                                rangesDict[value] = Note.range(location: range.location, length: range.length)
-                            }
-                        }
+                            let word = String(textView.text[swiftRange])
+                            rangesDict[word] = Note.range(location: range.location, length: range.length)
+                        
                     }
+                }
                     
                     
                     
@@ -284,8 +321,13 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
                         attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
                     }
                 }
-            }
         })
+        rangeOfWords?.removeAll()
+        for (_,key) in rangesDict {
+            let nsrange = Note.makeNSRange(from: key)
+            rangeOfWords?.append(nsrange)
+        }
+        wordsNeedingDef = Array(rangesDict.keys)
     }
     
 

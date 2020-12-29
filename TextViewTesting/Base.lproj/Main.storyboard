@@ -57,8 +57,11 @@
                                     <segue destination="mqr-Cy-WtX" kind="presentation" identifier="addFromWelcome" modalPresentationStyle="fullScreen" id="bQv-Av-9CW"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Studyfly" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KJg-Tj-Mvl">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Studyfly" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KJg-Tj-Mvl">
                                 <rect key="frame" x="49" y="140" width="316" height="110"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="KJg-Tj-Mvl" secondAttribute="height" multiplier="158:55" id="Yb6-0o-pac"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="Avenir-HeavyOblique" family="Avenir" pointSize="80"/>
                                 <color key="textColor" red="0.12549019610000001" green="0.50588235290000005" blue="0.76470588240000004" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -69,10 +72,10 @@
                         <constraints>
                             <constraint firstItem="qGC-Nz-me6" firstAttribute="top" secondItem="Tt8-zJ-J6n" secondAttribute="bottom" constant="20" id="39X-Up-ajl"/>
                             <constraint firstItem="qGC-Nz-me6" firstAttribute="centerX" secondItem="U5G-6y-0s1" secondAttribute="centerX" id="5H5-TA-7b7"/>
-                            <constraint firstItem="KJg-Tj-Mvl" firstAttribute="centerX" secondItem="U5G-6y-0s1" secondAttribute="centerX" id="GB3-uX-IXN"/>
                             <constraint firstItem="Tt8-zJ-J6n" firstAttribute="centerX" secondItem="8Uz-sd-lJR" secondAttribute="centerX" id="Haz-iP-7Md"/>
-                            <constraint firstItem="8Uz-sd-lJR" firstAttribute="top" secondItem="KJg-Tj-Mvl" secondAttribute="bottom" constant="41" id="M9q-77-Vja"/>
+                            <constraint firstItem="8Uz-sd-lJR" firstAttribute="top" secondItem="KJg-Tj-Mvl" secondAttribute="bottom" constant="41" id="N2e-pj-GfB"/>
                             <constraint firstItem="Tt8-zJ-J6n" firstAttribute="top" secondItem="8Uz-sd-lJR" secondAttribute="bottom" constant="40" id="O4k-I4-a9B"/>
+                            <constraint firstItem="KJg-Tj-Mvl" firstAttribute="centerX" secondItem="mk9-96-G3I" secondAttribute="centerX" id="SD0-BM-r2a"/>
                             <constraint firstItem="8Uz-sd-lJR" firstAttribute="centerX" secondItem="U5G-6y-0s1" secondAttribute="centerX" id="ZSL-Gc-pBv"/>
                             <constraint firstItem="qGC-Nz-me6" firstAttribute="width" secondItem="U5G-6y-0s1" secondAttribute="width" multiplier="0.700483" id="ZWJ-KJ-CrE"/>
                             <constraint firstItem="Tt8-zJ-J6n" firstAttribute="width" secondItem="U5G-6y-0s1" secondAttribute="width" multiplier="0.7" id="eBS-Wu-hpk"/>
@@ -239,18 +242,21 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Note" lineBreakMode="middleTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6yh-gd-qoI" userLabel="Title Label">
                                                     <rect key="frame" x="0.0" y="0.0" width="374" height="33.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="33.5" id="OYy-Pj-oaH"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Note note note note..." lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bXJ-Zm-Edn" userLabel="Content Label">
-                                                    <rect key="frame" x="0.0" y="38.5" width="374" height="16.5"/>
+                                                    <rect key="frame" x="0.0" y="38.5" width="374" height="16"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" systemColor="systemGray2Color"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5/12/20" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pui-lm-1KH" userLabel="Date Label">
-                                                    <rect key="frame" x="0.0" y="60" width="374" height="12"/>
+                                                    <rect key="frame" x="0.0" y="59.5" width="374" height="12.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                     <color key="textColor" systemColor="systemGray2Color"/>
                                                     <nil key="highlightedColor"/>
@@ -362,7 +368,7 @@
                             <constraint firstItem="SOo-GQ-qVK" firstAttribute="bottom" secondItem="Yoc-mN-hua" secondAttribute="bottom" constant="10" id="kI0-XG-64K"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Note" id="nxc-ut-Vd5">
+                    <navigationItem key="navigationItem" title="Note" largeTitleDisplayMode="always" id="nxc-ut-Vd5">
                         <rightBarButtonItems>
                             <barButtonItem title="Item" image="ellipsis.circle" catalog="system" id="LTx-25-V8P">
                                 <connections>
@@ -546,9 +552,9 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="z3L-uX-YZb"/>
+        <segue reference="0uq-Ey-4jI"/>
         <segue reference="bQv-Av-9CW"/>
-        <segue reference="m3j-gz-RT8"/>
+        <segue reference="Fei-Pv-2SI"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="butterfly" width="1024" height="1024"/>

@@ -56,6 +56,15 @@ class Note: Codable {
         return decodedNotes
     }
         
+    static func makeNSRange(from range: range) -> NSRange{
+        if let location = range.location, let length = range.length {
+            let nsRange = NSRange(location: location, length: length)
+            return nsRange
+        } else {
+            return NSRange(location: 0, length: 0)
+        }
+    }
+    
     static func makeNSAttributedString(string: String, fontSize: Int, rangeOfWord: [String : range]?) -> NSAttributedString {
         let size = CGFloat(fontSize)
         var attributedText: NSMutableAttributedString

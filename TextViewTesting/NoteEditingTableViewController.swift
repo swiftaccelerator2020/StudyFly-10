@@ -14,9 +14,9 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     var note: Note!
     var newNote = false // editing
     var selectedRange: NSRange?
-    var rangesSelected: [NSRange]?
+    var rangesSelected: [NSRange]? = []
     var attributedText: NSMutableAttributedString?
-    var selectedWords: [String]?
+    var selectedWords: [String]? = []
     var titleText: String?
     var fontSize: Int = 12
     var rangesDict: [String : Note.range] = [:]
@@ -31,27 +31,29 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
 //MARK: - When user edits text
     func textViewDidChange(_ textView: UITextView) {
         attributedText = NSMutableAttributedString(attributedString: textView.attributedText)
+        rangesDict.removeAll()
         print(attributedText as Any)
         contentEdit.attributedText = attributedText
-        attributedText?.enumerateAttribute(.backgroundColor, in: NSRange(location: 0, length: textView.attributedText.length), using: { (value, range, stop) in
+        attributedText?.enumerateAttribute(.backgroundColor, in: NSRange(0..<textView.attributedText.length), using: { (value, range, stop) in
             if let backgroundColour = value as? UIColor {
                 if backgroundColour == UIColor.yellow {
                     print(range)
-                    if let swiftRange = Range(range, in: contentEdit.text) {
-                        for (value,key) in rangesDict {
-                            if value == contentEdit.text[swiftRange] {
-                                rangesDict[value] = Note.range(location: range.location, length: range.length)
-                            }
-                        }
+                    if let swiftRange = Range(range, in: textView.text) {
+                        let word = String(textView.text[swiftRange])
+                        rangesDict[word] = Note.range(location: range.location, length: range.length)
                     }
-                    if isDarkMode {
-                        attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
-                    }
+                    
                 }
-            }
-        })
+        }
+    })
+        rangesSelected?.removeAll()
+        for (_,key) in rangesDict {
+            let nsrange = Note.makeNSRange(from: key)
+            rangesSelected?.append(nsrange)
+        }
+        selectedWords = Array(rangesDict.keys)
         editSizeSlider.isEnabled = !(attributedText?.string.isEmpty ?? true)
-    }
+}
     
 //MARK: - When the user select text
     func textViewDidChangeSelection(_ textView: UITextView) {
@@ -153,7 +155,6 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
             attributedText?.enumerateAttribute(.backgroundColor, in: nsrange, using: { (value, range, stop) in
                 if let colour = value as? UIColor {
                     if colour == UIColor.yellow {
-                        attributedText?.removeAttribute(.backgroundColor, range: nsrange)
                             for (text,key) in rangesDict {
                                 if let location = key.location, let length = key.length {
                                     let keyRange = NSRange(location: location, length: length)
@@ -162,7 +163,9 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
                                         rangesDict.removeValue(forKey: text)
                                         selectedWords = words.filter({ $0 != text })
                                         rangesSelected = ranges.filter({ $0 != keyRange })
-                                    
+                                        if isDarkMode {
+                                            attributedText?.addAttribute(.foregroundColor, value: UIColor.white, range: keyRange)
+                                        }
                                     }
                                 }
                             }
@@ -179,15 +182,27 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
         guard let attributedString = attributedText else {return}
         var word: String?
         print(attributedString)
-        if let range = Range(selectedRange ?? NSRange(location: 0, length: 1), in: contentEdit.text) {
-            selectedWords?.append(String(contentEdit.text[range]))
-            word = String(contentEdit.text[range])
-            print(selectedWords as Any)
+        if let selectedRange = selectedRange {
+            for (value,key) in rangesDict {
+                if NSIntersectionRange(Note.makeNSRange(from: key), selectedRange).length > 0{
+                    return
+                }
+            }
+            if let range = Range(selectedRange , in: contentEdit.text) {
+                if (selectedWords?.append(String(contentEdit.text[range]))) == nil {
+                    selectedWords = [String(contentEdit.text[range])]
+                }
+                word = String(contentEdit.text[range])
+                print(selectedWords as Any)
+            }
+        
         }
         if selectedRange != nil, let text = word{
             print("contentEdit selected Range is \(contentEdit.selectedRange)")
             attributedString.addAttribute(NSAttributedString.Key.backgroundColor, value:UIColor.yellow , range: selectedRange ?? contentEdit.selectedRange)
-            rangesSelected?.append(contentEdit.selectedRange)
+            if (rangesSelected?.append(contentEdit.selectedRange)) == nil {
+                rangesSelected = [contentEdit.selectedRange]
+            }
             rangesDict[text] = Note.range(location: contentEdit.selectedRange.location, length: contentEdit.selectedRange.length)
             if isDarkMode {
                 attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: contentEdit.selectedRange)
@@ -230,7 +245,7 @@ class NoteEditingTableViewController: UITableViewController, UITextViewDelegate 
     @IBAction func textFieldChanged(_ sender: Any) {
         if titleTextField.hasText != false {
             titleText = titleTextField.text
-            print(titleText)
+//            print(titleText)
         }
     }
 
