@@ -83,7 +83,11 @@ class DetailsViewController: UIViewController, UITextViewDelegate, UIGestureReco
         
         
         let activityViewController = UIActivityViewController(activityItems: [text, printFormattor], applicationActivities: nil)
-        
+        if let popOverViewController = activityViewController.popoverPresentationController {
+            popOverViewController.sourceView = self.view
+            popOverViewController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+              popOverViewController.permittedArrowDirections = []
+        }
         present(activityViewController, animated: true)
     }
     

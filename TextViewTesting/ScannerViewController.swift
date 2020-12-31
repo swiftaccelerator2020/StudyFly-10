@@ -10,7 +10,7 @@ import Foundation
 import Vision
 import VisionKit
 
-class ViewController: UIViewController, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, VNDocumentCameraViewControllerDelegate {
+class ScannerViewController: UIViewController, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, VNDocumentCameraViewControllerDelegate {
 
     let dateFormattor = DateFormatter()
     var wordsNeedingDef: [String]?
@@ -25,42 +25,44 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
     var fontSize: Int = 12
     var rangesDict: [String:Note.range] = [:]
     var date: Date!
-    //MARK: - Func land
     
-    // For Photo Library
+    //MARK: - For Photo Library
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
-        self.imagePicked = image
-        self.imageView.image = image
+        let fixedImage = image?.fixOrientation()
+        self.imagePicked = fixedImage
+        self.imageView.image = fixedImage
         self.imageView.isHidden = false
         self.scanButton.isHidden = false
         picker.dismiss(animated: true, completion: nil)
     }
     
-    // For camera
+    //MARK: - If camera fails
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
         print("Error with the camera picker!")
         print(error)
         controller.dismiss(animated: true, completion: nil)
     }
-    
+    //MARK: - If user cancel camera
     func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
         print("Camera picker is cancelled!")
         controller.dismiss(animated: true, completion: nil)
     }
-    
+    //MARK: - If camera succeed
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
         print("Finish with camera")
         for i in 0 ..< scan.pageCount {
             let img = scan.imageOfPage(at: i)
-            imagePicked = img
+            let fixedImage = img.fixOrientation()
+            imagePicked = fixedImage
         }
+        
         self.imageView.image = imagePicked
         self.imageView.isHidden = false
         self.scanButton.isHidden = false
         controller.dismiss(animated: true, completion: nil)
     }
-    
+    //MARK: - Process detected Text
     func handleDetectedText(request: VNRequest, error: Error?) {
         if let error = error {
             print("ERROR: \(error)")
@@ -100,7 +102,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
             date = Date()
         }
     }
-    
+    //MARK: - Update the colours of app
     private func updateColors() {
         if let attributedString = attributedText {
             attributedString.removeAttribute(.foregroundColor, range: NSRange(0..<attributedString.length))
@@ -116,14 +118,14 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
             textView.attributedText = attributedText
         }
     }
-    
+    //MARK: - When app interface style changes
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateColors()
         
     }
     
-    
+    //MARK: - IBOutlet land
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scanButton: UIButton!
@@ -134,7 +136,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
     @IBOutlet weak var sizeLabel: UILabel!
     
     
-    
+    //MARK: View did load
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -188,6 +190,11 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         alert.addAction(photoLibrary)
         alert.addAction(camera)
         alert.addAction(cancel)
+        if let popoverPresentationController = alert.popoverPresentationController {
+            popoverPresentationController.sourceView = self.view
+            popoverPresentationController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+              popoverPresentationController.permittedArrowDirections = []
+        }
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -226,7 +233,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         guard let attributedString = attributedText else {return}
         var text: String?
         if let selectedRange = rangeOfSelection {
-            for (value,key) in rangesDict {
+            for (_,key) in rangesDict {
                 if NSIntersectionRange(Note.makeNSRange(from: key), selectedRange).length > 0{
                     return
                 }
@@ -270,37 +277,37 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
 
     
     //MARK: - Remove highlighted words
-        @objc func removeHighlightedWords() {
-            if let nsrange = rangeOfSelection, let words = wordsNeedingDef, let ranges = rangeOfWords {
-                attributedText?.enumerateAttribute(.backgroundColor, in: nsrange, using: { (value, range, stop) in
-                    if let colour = value as? UIColor {
-                        if colour == UIColor.yellow {
-                                for (text,key) in rangesDict {
-                                    if let location = key.location, let length = key.length {
-                                        let keyRange = NSRange(location: location, length: length)
-                                        if NSIntersectionRange(nsrange, keyRange).length > 0 {
-                                            attributedText?.removeAttribute(.backgroundColor, range: keyRange)
-                                            rangesDict.removeValue(forKey: text)
-                                            wordsNeedingDef = words.filter({ $0 != text })
-                                            rangeOfWords = ranges.filter({ $0 != keyRange })
-                                            if isDarkMode {
-                                                attributedText?.addAttribute(.foregroundColor, value: UIColor.white, range: keyRange)
-                                            }
-                                        }
+    @objc func removeHighlightedWords() {
+        if let nsrange = rangeOfSelection, let words = wordsNeedingDef, let ranges = rangeOfWords {
+            attributedText?.enumerateAttribute(.backgroundColor, in: nsrange, using: { (value, range, stop) in
+                if let colour = value as? UIColor {
+                    if colour == UIColor.yellow {
+                        for (text,key) in rangesDict {
+                            if let location = key.location, let length = key.length {
+                                let keyRange = NSRange(location: location, length: length)
+                                if NSIntersectionRange(nsrange, keyRange).length > 0 {
+                                    attributedText?.removeAttribute(.backgroundColor, range: keyRange)
+                                    rangesDict.removeValue(forKey: text)
+                                    wordsNeedingDef = words.filter({ $0 != text })
+                                    rangeOfWords = ranges.filter({ $0 != keyRange })
+                                    if isDarkMode {
+                                        attributedText?.addAttribute(.foregroundColor, value: UIColor.white, range: keyRange)
                                     }
                                 }
-                            
-                            textView.attributedText = attributedText
+                            }
                         }
+                        
+                        textView.attributedText = attributedText
                     }
-                })
-            }
+                }
+            })
         }
+    }
     
     
     //MARK: - Text view did change
     func textViewDidChange(_ textView: UITextView) {
-        print(textView.attributedText)
+//        print(textView.attributedText)
         attributedText = NSMutableAttributedString(attributedString: textView.attributedText)
         attributedText?.enumerateAttribute(.backgroundColor, in: NSRange(location: 0, length: textView.attributedText.length), using: { (value, range, stop) in
             if let backgroundColour = value as? UIColor {
@@ -312,10 +319,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
                         
                     }
                 }
-                    
-                    
-                    
-                    
+        
                     note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: attributedText?.string ?? textView.attributedText.string, selectedDict: rangesDict,  noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
                     if isDarkMode {
                         attributedText?.addAttribute(.foregroundColor, value: UIColor.black, range: range)
@@ -338,7 +342,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         if let range = Range(textView.selectedRange, in: textView.text) {
             print(textView.text[range])
             rangeOfSelection = textView.selectedRange
-            print("rangeOfSelection is \(rangeOfSelection)")
+//            print("rangeOfSelection is \(rangeOfSelection)")
         }
 
     }
@@ -355,7 +359,8 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         let stripped = sizeAttributedText.strippedOriginalFont()
         attributedText = NSMutableAttributedString(attributedString: stripped ?? sizeAttributedText)
         textView.attributedText = stripped
-        printFormatter = UISimpleTextPrintFormatter(attributedText: textView.attributedText)        
+        printFormatter = UISimpleTextPrintFormatter(attributedText: textView.attributedText)
+        textView.font = UIFont.systemFont(ofSize: CGFloat(fontSize))
         note = Note(noteTitle: titleTexField.text == "" ? "New Note" : titleTexField.text!, note: textView.attributedText.string, selectedDict: rangesDict, noteFontSize: fontSize, creationDate: dateFormattor.string(from: date))
     }
     
@@ -387,7 +392,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
         let textRequest = VNRecognizeTextRequest(completionHandler: self.handleDetectedText)
         textRequest.recognitionLevel = .accurate
         textRequest.usesLanguageCorrection = true
-        
+        textRequest.recognitionLanguages = ["zh-Hans", "en-gb"]
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 try request.perform([textRequest])
@@ -406,7 +411,7 @@ class ViewController: UIViewController, UITextViewDelegate, UINavigationControll
             
         }
     
-        
+    //MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "saving" {
             if let nav = segue.destination as? UINavigationController {

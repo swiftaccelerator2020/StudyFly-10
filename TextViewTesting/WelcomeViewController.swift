@@ -11,12 +11,20 @@ class WelcomeViewController: UIViewController {
     @IBOutlet weak var scanButton: UIButton!
     @IBOutlet weak var newNoteButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var appNameLabel: UILabel!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        scanButton.layer.cornerRadius = 25
-        newNoteButton.layer.cornerRadius = 25
+//        self.navigationController?.navigationBar.isHidden = true
+        if let labelFont = appNameLabel.font {
+            print(labelFont.pointSize)
+            appNameLabel.font = UIFontMetrics(forTextStyle: .headline).scaledFont(for: labelFont)
+            print(appNameLabel.font.pointSize)
+            appNameLabel.adjustsFontForContentSizeCategory = true
+        }
+        scanButton.layer.cornerRadius = 10
+        newNoteButton.layer.cornerRadius = 10
         imageView.image = UIImage(named: "butterfly")
         imageView.image = imageView.image?.roundedImage
         // Do any additional setup after loading the view.

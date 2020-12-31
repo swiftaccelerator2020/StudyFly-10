@@ -12,11 +12,11 @@
 		0A5DEE902587B97400CDFAF0 /* NoteNaviViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */; };
 		0A5FB096258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */; };
 		0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift */; };
-		0A9573B82596470400269D56 /* UIImage + roundedImage .swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9573B72596470400269D56 /* UIImage + roundedImage .swift */; };
+		0A9573B82596470400269D56 /* UIImage + roundedImage + fix image orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9573B72596470400269D56 /* UIImage + roundedImage + fix image orientation.swift */; };
 		0ABECCDC2589A1F300FE168F /* WelcomeNaviViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */; };
 		0AFF549D2574EDFF004DCFDA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF549C2574EDFF004DCFDA /* AppDelegate.swift */; };
 		0AFF549F2574EDFF004DCFDA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF549E2574EDFF004DCFDA /* SceneDelegate.swift */; };
-		0AFF54A12574EDFF004DCFDA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF54A02574EDFF004DCFDA /* ViewController.swift */; };
+		0AFF54A12574EDFF004DCFDA /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFF54A02574EDFF004DCFDA /* ScannerViewController.swift */; };
 		0AFF54A42574EDFF004DCFDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AFF54A22574EDFF004DCFDA /* Main.storyboard */; };
 		0AFF54A62574EE04004DCFDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AFF54A52574EE04004DCFDA /* Assets.xcassets */; };
 		0AFF54A92574EE04004DCFDA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AFF54A72574EE04004DCFDA /* LaunchScreen.storyboard */; };
@@ -52,12 +52,12 @@
 		0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteNaviViewController.swift; sourceTree = "<group>"; };
 		0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColour + changing colour based on UIStyle.swift"; sourceTree = "<group>"; };
 		0A5FB09A258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController + finding if it is darkmode + allow for multiline title.swift"; sourceTree = "<group>"; };
-		0A9573B72596470400269D56 /* UIImage + roundedImage .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + roundedImage .swift"; sourceTree = "<group>"; };
+		0A9573B72596470400269D56 /* UIImage + roundedImage + fix image orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + roundedImage + fix image orientation.swift"; sourceTree = "<group>"; };
 		0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeNaviViewController.swift; sourceTree = "<group>"; };
 		0AFF54992574EDFF004DCFDA /* TextViewTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TextViewTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AFF549C2574EDFF004DCFDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AFF549E2574EDFF004DCFDA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		0AFF54A02574EDFF004DCFDA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0AFF54A02574EDFF004DCFDA /* ScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		0AFF54A32574EDFF004DCFDA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0AFF54A52574EE04004DCFDA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0AFF54A82574EE04004DCFDA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -128,11 +128,11 @@
 				0A5DEE8F2587B97200CDFAF0 /* NoteNaviViewController.swift */,
 				0A5FB095258F04E500E05103 /* UIColour + changing colour based on UIStyle.swift */,
 				0AFF54A22574EDFF004DCFDA /* Main.storyboard */,
-				0AFF54A02574EDFF004DCFDA /* ViewController.swift */,
+				0AFF54A02574EDFF004DCFDA /* ScannerViewController.swift */,
 				0A4241542592FCDA00419BC4 /* NSAttributedString + stripping original font.swift */,
 				0ABECCDB2589A1F300FE168F /* WelcomeNaviViewController.swift */,
 				0A5DEE78257BF9FA00CDFAF0 /* WelcomeViewController.swift */,
-				0A9573B72596470400269D56 /* UIImage + roundedImage .swift */,
+				0A9573B72596470400269D56 /* UIImage + roundedImage + fix image orientation.swift */,
 				395B445F25828A75008E7957 /* Note.swift */,
 				395B447E2582D5D2008E7957 /* NotesTableViewController.swift */,
 				395B446E2582D427008E7957 /* NotesTableViewCell.swift */,
@@ -300,8 +300,8 @@
 				395B447F2582D5D2008E7957 /* NotesTableViewController.swift in Sources */,
 				395B44872582D7B7008E7957 /* DetailsViewController.swift in Sources */,
 				395B446025828A75008E7957 /* Note.swift in Sources */,
-				0AFF54A12574EDFF004DCFDA /* ViewController.swift in Sources */,
-				0A9573B82596470400269D56 /* UIImage + roundedImage .swift in Sources */,
+				0AFF54A12574EDFF004DCFDA /* ScannerViewController.swift in Sources */,
+				0A9573B82596470400269D56 /* UIImage + roundedImage + fix image orientation.swift in Sources */,
 				0A5DEE79257BF9FA00CDFAF0 /* WelcomeViewController.swift in Sources */,
 				0AFF549D2574EDFF004DCFDA /* AppDelegate.swift in Sources */,
 				0A5FB09B258F3CC200E05103 /* UIViewController + finding if it is darkmode + allow for multiline title.swift in Sources */,
@@ -486,7 +486,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XL5JK4F896;
 				INFOPLIST_FILE = TextViewTesting/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -494,12 +494,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = sg.tk.2020.studyfly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -510,7 +510,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XL5JK4F896;
 				INFOPLIST_FILE = TextViewTesting/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -518,12 +518,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = sg.tk.2020.studyfly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
